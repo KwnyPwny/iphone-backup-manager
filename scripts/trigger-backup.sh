@@ -6,8 +6,7 @@ LOG="/var/log/iphone-backup.log"
 BACKUP_DIR="/backups/raw"
 BORG_REPO="/backups/borg"
 LOCKFILE="/tmp/iphone-backup.lock"
-MIN_FREE_GB=15        # abort if less than this much free space on the backup partition
-BACKUP_TIMEOUT="3h"  # kill idevicebackup2 if it hangs longer than this
+BACKUP_TIMEOUT="1h"  # kill idevicebackup2 if it hangs longer than this
 STATUS_URL="https://localhost/notify"   # set to "" to disable push notifications
 
 # Exit if a backup is already running
@@ -36,14 +35,6 @@ _notify() {
 
 BACKUP_START=$(date +%s)
 echo "=== Backup started: $(date) ===" >> "$LOG"
-
-# Abort early if disk space is critically low
-FREE_KB=$(df --output=avail "$BACKUP_DIR" 2>/dev/null | tail -1)
-FREE_GB=$(( FREE_KB / 1024 / 1024 ))
-if [ "$FREE_GB" -lt "$MIN_FREE_GB" ]; then
-    echo "ERROR: Not enough disk space (${FREE_GB} GB free, need ${MIN_FREE_GB} GB). Aborting." >> "$LOG"
-    exit 1
-fi
 
 # Wait until iPhone is reachable (max 60 seconds)
 for i in $(seq 1 12); do
