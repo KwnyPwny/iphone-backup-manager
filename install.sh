@@ -45,7 +45,8 @@ install_packages() {
     # Check if all required packages are already present
     local pkgs=(build-essential git autoconf automake libtool
                 pkg-config libssl-dev libusb-1.0-0-dev libplist-dev
-                python3 python3-cryptography avahi-daemon avahi-utils borgbackup ifuse authbind)
+                python3 python3-cryptography avahi-daemon avahi-utils borgbackup authbind \
+                fuse3 libfuse3-dev)
     local missing=()
     for p in "${pkgs[@]}"; do
         dpkg-query -W -f='${Status}' "$p" 2>/dev/null | grep -q "install ok installed" \
@@ -90,6 +91,7 @@ build_libimobiledevice() {
     _build_repo libimobiledevice-glue
     _build_repo libusbmuxd
     _build_repo libimobiledevice
+    _build_repo ifuse
     sudo ldconfig
     cd "$SCRIPT_DIR"
 }
