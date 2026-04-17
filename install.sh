@@ -91,7 +91,31 @@ build_libimobiledevice() {
     _build_repo libimobiledevice-glue
     _build_repo libusbmuxd
     _build_repo libimobiledevice
-    _build_repo ifuse
+    sudo ldconfig
+    cd "$SCRIPT_DIR"
+}
+
+# ── Step 2b: ifuse from source (needed for WiFi photo sync) ──────────────────
+build_ifuse() {
+    step "ifuse"
+    if [[ -x /usr/local/bin/ifuse ]]; then
+        skip "ifuse already built ($(ifuse --version 2>&1 | head -1))"
+        return
+    fi
+
+    info "Building ifuse from source..."
+    sudo mkdir -p /opt/libimobiledevice-src
+    sudo chown "$USER":"$USER" /opt/libimobiledevice-src
+    cd /opt/libimobiledevice-src
+
+    local PKG=/usr/local/lib/pkgconfig
+    if [ ! -d "ifuse" ]; then
+        git clone --depth=1 https://github.com/libimobiledevice/ifuse.git
+    fi
+    cd ifuse
+    PKG_CONFIG_PATH="$PKG" ./autogen.sh --prefix=/usr/local
+    make -j"$(nproc)"
+    sudo make install
     sudo ldconfig
     cd "$SCRIPT_DIR"
 }
@@ -325,6 +349,7 @@ main() {
         install)
             install_packages
             build_libimobiledevice
+            build_ifuse
             install_netmuxd
             setup_directories
             init_borg
@@ -336,6 +361,7 @@ main() {
         update)
             echo "Updating scripts and services (skipping build from source)..."
             install_packages   # picks up new deps added since last install
+            build_ifuse        # no-op if already built, otherwise builds it
             install_scripts    # always deploy latest scripts
             setup_ssl          # no-op if cert exists
             setup_systemd      # updates unit files + restarts
