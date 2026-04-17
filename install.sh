@@ -113,6 +113,7 @@ install_netmuxd() {
     esac
 
     sudo mkdir -p "$INSTALL_DIR"
+    sudo chown "$USER":"$USER" "$INSTALL_DIR"
     sudo wget -q --show-progress \
         "https://github.com/jkcoxson/netmuxd/releases/latest/download/netmuxd-${tag}" \
         -O "$dest"
