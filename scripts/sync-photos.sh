@@ -67,7 +67,7 @@ fi
 mkdir -p "$MOUNT_POINT"
 trap "_unmount" EXIT
 
-ifuse --udid "$UDID" "$MOUNT_POINT" 2>> "$LOG"
+ifuse --udid "$UDID" --network "$MOUNT_POINT" 2>> "$LOG"
 if ! mountpoint -q "$MOUNT_POINT"; then
     echo "ERROR: Photo sync: could not mount iPhone — device must be unlocked" >> "$LOG"
     _notify "Photo Sync Failed" "Could not mount iPhone — unlock the screen and try again"
