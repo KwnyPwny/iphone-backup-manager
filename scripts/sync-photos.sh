@@ -55,21 +55,22 @@ if [ "$FILE_COUNT" -eq 0 ]; then
     exit 0
 fi
 
-# Check iPhone reachable
-if ! idevice_id -l -n 2>/dev/null | grep -q .; then
+# Check iPhone reachable and get UDID
+UDID=$(idevice_id -l -n 2>/dev/null | head -1)
+if [ -z "$UDID" ]; then
     echo "ERROR: Photo sync: iPhone not reachable" >> "$LOG"
     _notify "Photo Sync Failed" "iPhone not reachable over WiFi"
     exit 1
 fi
 
-# Mount iPhone filesystem
+# Mount iPhone filesystem (UDID must be passed explicitly for WiFi/network devices)
 mkdir -p "$MOUNT_POINT"
 trap "_unmount" EXIT
 
-ifuse "$MOUNT_POINT" 2>> "$LOG"
+ifuse --udid "$UDID" "$MOUNT_POINT" 2>> "$LOG"
 if ! mountpoint -q "$MOUNT_POINT"; then
-    echo "ERROR: Photo sync: could not mount iPhone (device locked?)" >> "$LOG"
-    _notify "Photo Sync Failed" "Could not mount iPhone — is the screen unlocked?"
+    echo "ERROR: Photo sync: could not mount iPhone — device must be unlocked" >> "$LOG"
+    _notify "Photo Sync Failed" "Could not mount iPhone — unlock the screen and try again"
     exit 1
 fi
 
