@@ -1,0 +1,13 @@
+[Unit]
+Description=netmuxd - Network multiplexing daemon for iOS devices
+Documentation=https://github.com/jkcoxson/netmuxd
+After=network.target avahi-daemon.service
+Requires=avahi-daemon.service
+
+[Service]
+ExecStart=/opt/iphone-backup/netmuxd
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

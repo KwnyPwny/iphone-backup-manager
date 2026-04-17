@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Secrets / pairing records — never commit these
+*.plist
+
+# Claude settings
+.claude/

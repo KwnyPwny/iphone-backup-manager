@@ -1,0 +1,7 @@
+[Unit]
+Description=iPhone Backup Stale Check
+
+[Service]
+Type=oneshot
+ExecStart=/opt/iphone-backup/check-stale.sh
+User=STATUS_USER
