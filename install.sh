@@ -150,6 +150,9 @@ install_scripts() {
         sudo cp "$SCRIPT_DIR/scripts/$f" "$INSTALL_DIR/$f"
         sudo chmod +x "$INSTALL_DIR/$f"
     done
+    # Ensure everything in INSTALL_DIR is owned by the backup user,
+    # including any files previously created by a manual sudo run.
+    sudo chown -R "$USER":"$USER" "$INSTALL_DIR"
     info "Scripts installed to $INSTALL_DIR"
 }
 
