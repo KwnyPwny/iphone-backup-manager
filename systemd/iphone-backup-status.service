@@ -3,13 +3,10 @@ Description=iPhone Backup Status Dashboard
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python3 /opt/iphone-backup/status-server.py
+ExecStart=/usr/bin/authbind --deep /usr/bin/python3 /opt/iphone-backup/status-server.py
 Restart=always
 RestartSec=5
 User=STATUS_USER
-# CAP_NET_BIND_SERVICE allows binding to port 443 without running as root
-AmbientCapabilities=CAP_NET_BIND_SERVICE
-CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 Environment=BACKUP_LOG=/var/log/iphone-backup.log
 Environment=BORG_REPO=/backups/borg
 Environment=STATUS_PORT=443

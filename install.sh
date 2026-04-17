@@ -45,7 +45,7 @@ install_packages() {
     # Check if all required packages are already present
     local pkgs=(build-essential git autoconf automake libtool
                 pkg-config libssl-dev libusb-1.0-0-dev libplist-dev
-                python3 python3-cryptography avahi-daemon avahi-utils borgbackup ifuse)
+                python3 python3-cryptography avahi-daemon avahi-utils borgbackup ifuse authbind)
     local missing=()
     for p in "${pkgs[@]}"; do
         dpkg-query -W -f='${Status}' "$p" 2>/dev/null | grep -q "install ok installed" \
@@ -204,16 +204,30 @@ setup_systemd() {
         "$SCRIPT_DIR/config/logrotate" \
         | sudo tee /etc/logrotate.d/iphone-backup > /dev/null
 
+    # Allow the backup user to bind port 443 via authbind
+    sudo touch /etc/authbind/byport/443
+    sudo chown "$USER" /etc/authbind/byport/443
+    sudo chmod 755 /etc/authbind/byport/443
+
     sudo systemctl daemon-reload
     sudo systemctl enable --now avahi-daemon
     sudo systemctl enable --now netmuxd
+    sudo systemctl enable --now iphone-backup-stale.timer
 
-    # Restart status server to pick up new scripts / config
+    # Start or restart the status server
     if systemctl is-active --quiet iphone-backup-status 2>/dev/null; then
         sudo systemctl restart iphone-backup-status
     else
         sudo systemctl enable --now iphone-backup-status
-    sudo systemctl enable --now iphone-backup-stale.timer
+    fi
+
+    # Verify it actually came up
+    sleep 2
+    if systemctl is-active --quiet iphone-backup-status; then
+        info "Status server running"
+    else
+        warn "Status server failed to start. Logs:"
+        sudo journalctl -u iphone-backup-status -n 20 --no-pager || true
     fi
 
     # Disable usbmuxd if running — it conflicts with netmuxd's socket
@@ -223,7 +237,7 @@ setup_systemd() {
         sudo systemctl disable usbmuxd
     fi
 
-    info "Services enabled and running"
+    info "Services enabled"
 }
 
 # ── Uninstall ─────────────────────────────────────────────────────────────────
