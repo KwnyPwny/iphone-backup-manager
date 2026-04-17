@@ -181,6 +181,8 @@ scp my-photos/*.jpg user@<VM-IP>:/backups/photo-sync/
 
 You can also add it to your iOS Shortcut as a second SSH action (same pattern as the backup trigger, different script path).
 
+> After the sync, open the **Photos app** on the iPhone once. iOS scans the DCIM folder on launch and imports the new files into the library. This is an iOS limitation — there is no way to trigger the import programmatically without private Apple APIs.
+
 ## Restoring a Backup
 
 List available snapshots:

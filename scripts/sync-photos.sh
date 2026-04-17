@@ -105,10 +105,13 @@ ELAPSED=$(( $(date +%s) - START ))
 MINS=$(( ELAPSED / 60 )); SECS=$(( ELAPSED % 60 ))
 
 echo "Photo sync: ${COPIED} copied, ${SKIPPED} skipped, ${FAILED} failed (${MINS}m ${SECS}s)" >> "$LOG"
+echo "Open the Photos app on your iPhone to trigger the import into the library." >> "$LOG"
 echo "=== Photo sync finished: $(date) ===" >> "$LOG"
 
 if [ "$FAILED" -gt 0 ]; then
     _notify "Photo Sync Done (with errors)" "${COPIED} copied, ${FAILED} failed — check log"
+elif [ "$COPIED" -gt 0 ]; then
+    _notify "Photo Sync Complete" "${COPIED} photos on device — open Photos app to import"
 else
-    _notify "Photo Sync Complete" "${COPIED} photos copied, ${SKIPPED} already on device"
+    _notify "Photo Sync Complete" "Nothing new — all ${SKIPPED} photos already on device"
 fi
