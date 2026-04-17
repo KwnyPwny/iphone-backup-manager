@@ -159,30 +159,6 @@ In the Shortcuts app, open the SSH action, tap the key, and share the public key
 
 The key is then locked down so that even if it were ever compromised, an attacker could only trigger a backup and not get a shell.
 
-## Photo Sync (server → iPhone)
-
-Photos and videos placed in `/backups/photo-sync/` can be synced to the iPhone's camera roll via `ifuse`. This is the same thing iTunes does when syncing photos from a computer, without iTunes.
-
-Supported formats: JPG, JPEG, PNG, HEIC, HEIF, MP4, MOV, M4V.
-
-Files already present on the device (matched by filename) are skipped. The sync is one-way and additive — nothing is deleted from the iPhone.
-
-> The device must be unlocked when the sync runs, as iOS requires user presence for filesystem write access.
-
-**Trigger manually** whenever new photos are in the sync folder:
-
-```bash
-# Copy photos to the sync folder (from your local machine)
-scp my-photos/*.jpg user@<VM-IP>:/backups/photo-sync/
-
-# Run the sync (iPhone must be reachable and unlocked)
-/opt/iphone-backup/sync-photos.sh
-```
-
-You can also add it to your iOS Shortcut as a second SSH action (same pattern as the backup trigger, different script path).
-
-> After the sync, open the **Photos app** on the iPhone once. iOS scans the DCIM folder on launch and imports the new files into the library. This is an iOS limitation — there is no way to trigger the import programmatically without private Apple APIs.
-
 ## Restoring a Backup
 
 List available snapshots:
