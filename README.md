@@ -1,10 +1,12 @@
 # iphone-backup-server
 
-Automatic iPhone backups over WiFi to a self-hosted server, using **libimobiledevice**, **netmuxd**, and **Borg Backup**. 
+Automatic iPhone backups over WiFi to a **self-hosted server**, using **libimobiledevice**, **netmuxd**, and **Borg Backup**.
 
-For example, the backup can be triggered automatically when you plug your iPhone into the charger at night via an iOS Shortcut automation.
+## Example Scenario
 
-**Key constraint:** Since iOS 16.1, Apple requires a PIN confirmation on the device for every backup. This means a fully automated cron job does not work. Instead, the iOS Shortcut automation triggers the backup when you plug in the charger at night (after 22:00, on your home WiFi). At that point you confirm the PIN once and the rest runs unattended.
+As an example, you can use this project to backup your iPhone automatically when you plug it into the charger at night.
+
+**Key constraint:** Since iOS 16.1, Apple requires a PIN confirmation on the device for every backup. This means a fully automated (unattended) backup does not work. Instead, you can use an iOS Shortcut automation that triggers the backup when you want it to happen. At that point, you have to confirm the device password once but the rest runs unattended.
 
 ## Requirements
 
@@ -25,12 +27,15 @@ The Sync click is mandatory. The iPhone only starts broadcasting itself on the l
 
 After this one-time setup, the Mac or Windows machine is no longer needed.
 
+## Vibe coded
+
+This project is mainly coded with Claude. As with every piece of software on the Internet, use at your own risk.
+
 ## Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/iphone-backup-server.git
+git clone https://github.com/KwnyPwny/iphone-backup-server.git
 cd iphone-backup-server
-chmod +x install.sh
 ./install.sh
 ```
 
